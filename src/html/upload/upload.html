@@ -28,14 +28,8 @@
         </div>
 
         <div data-ng-show="getIsFileDropped()">
-            <p class="lead">
-                Copy the link below and send it to a friend to start a peer-to-peer file transfer. Do not close
-                this browser tab to enable peer-to-peer file transfer.
-            </p>
-
             <div class="upload-queue">
                 <div class="upload-queue-item" data-ng-repeat="file in fileModel.files" data-ng-animate>
-
                     <div class="row">
                         <div class="col-sm-2">
                             <div class="bg-primary">
@@ -44,8 +38,7 @@
                         </div>
                         <div class="col-sm-10">
                             <button type="button" class="close pull-right" data-ng-click="removeFile(file.uniqueUrl)">
-                                &times;
-                                <span class="sr-only">Close upload</span>
+                                &times; <span class="sr-only">Remove upload</span>
                             </button>
 
                             <div class="form-group">
@@ -54,16 +47,29 @@
                                 </div>
                                 <div class="clearfix"></div>
 
-                                <input type="text" class="form-control" placeholder="Generating Url..." data-ng-value="file.uniqueUrl" onclick="select()" readonly>
-
-                                <div data-reepio-clipboard data-on-copied="onClipboardCopied" data-clipboard-data="file.uniqueUrl">
-                                    <div class="btn-clipboard-label"
-                                         data-toggle="clipboard-tooltip"
-                                         data-placement="bottom"
-                                         data-container=".upload-queue-item"
-                                         title="Copied to Clipboard!">
-                                        <span class="fa fa-clipboard"></span>
+                                <!--With clipboard support-->
+                                <div ng-if="isClipboardSupported">
+                                    <div class="input-group">
+                                        <input type="url" class="form-control" placeholder="Generating Url..."
+                                               data-ng-value="file.uniqueUrl" onclick="select()" readonly>
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default btn-clipboard" type="button"
+                                                    ng-disabled="!file.uniqueUrl"
+                                                    ng-click="copyToClipboard(file.uniqueUrl)"
+                                                    uib-tooltip="Copied to clipboard!"
+                                                    tooltip-placement="left"
+                                                    tooltip-trigger="{'click': 'mouseleave'}"
+                                                    tooltip-popup-close-delay="2000">
+                                                <span class="fa fa-clipboard"></span>
+                                            </button>
+                                        </span>
                                     </div>
+                                </div>
+
+                                <!--No clipboard support-->
+                                <div ng-if="!isClipboardSupported">
+                                    <input type="url" class="form-control" placeholder="Generating Url..."
+                                           data-ng-value="file.uniqueUrl" onclick="select()" readonly>
                                 </div>
                             </div>
 
@@ -75,12 +81,12 @@
                                     <span class="fa fa-download"></span>
                                     <span data-ng-bind="file.totalDownloads"></span>x
                                 </li>
-                                <li>
-                                    <a href="#/" data-ng-click="lockFile(file)">
+                                <li ng-if="file.uniqueUrl">
+                                    <a href="/" data-ng-click="lockFile(file)">
                                         <span class="fa" data-ng-class="{'fa-lock': file.password, 'fa-unlock': ! file.password }"></span>
-                                        <span data-ng-hide="file.password">No Password</span>
+                                        <span data-ng-hide="file.password">Set Password</span>
                                         <span data-ng-show="file.password">
-                                            Password: <span data-ng-bind="file.password|limitTo:10"></span>
+                                            Protected
                                             <span data-ng-show="file.password.length > 10">...</span>
                                         </span>
                                     </a>
@@ -114,7 +120,6 @@
                     Add or drop files...
                 </button>
                 <div class="clearfix"></div>
-                <p class="text-muted text-center"><small>...or paste clipboard images</small></p>
             </div>
         </div>
     </div>

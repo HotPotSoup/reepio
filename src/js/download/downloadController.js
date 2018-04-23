@@ -48,12 +48,14 @@
 
                 $scope.isImage = false;
 
-                if($rootScope.downloadId.length == (config.peerIdLength + config.fileIdLength))
+                if($rootScope.downloadId.length === (config.peerIdLength + config.fileIdLength))
 				{
                     downloadService.requestFileInformation($rootScope.downloadId);
                 }
 				else
 				{
+					$rootScope.downloadId = null;
+					$rootScope.cryptoDownloadId = null;
 					$scope.downloadError = 'Invalid Download';
 					$scope.downloadErrorDescription = 'The download link you are using is invalid.';
 				}
@@ -129,7 +131,7 @@
 						});
 					}),
 					$rootScope.$on('DownloadDataChannelClose', function() {
-						if($rootScope.downloadService.downloadState != 'finished' && $scope.isStreamingRunning === false){
+						if($rootScope.downloadService.downloadState !== 'finished' && $scope.isStreamingRunning === false){
 							$timeout(function(){
 								$scope.$apply(function () {
 									$scope.downloadError = 'The uploader has closed the connection';

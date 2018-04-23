@@ -3,11 +3,6 @@
  */
 
 angular.module('reepioClipboardDirective', [])
-	.value('clipboardSwf', 'CopyToClipboard.swf')
-	.value('clipboardExpressInstallSwf', 'expressInstall.swf')
-	.config(function () {
-		swfobject.switchOffAutoHideShow();
-	})
 	.service('clipboardDirectiveIdService', [function () {
 		return {
 			__id: 0,
@@ -67,13 +62,9 @@ angular.module('reepioClipboardDirective', [])
 
 				var flashObj, bgColor, flashvars, attributes;
 
-				bgColor = element
-					.find('.btn-clipboard')
-					.css('background-color');
-
 				flashvars = {
 					data: scope.data,
-					bgcolor: '0x' + converterService.rgb2hex(bgColor),
+					// bgcolor: '0x' + converterService.rgb2hex(bgColor),
 					id: scope.id
 				};
 
